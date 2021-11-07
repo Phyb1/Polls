@@ -1,5 +1,4 @@
 from django.http import HttpResponse, HttpResponseRedirect # takes only one argument which is the url the user will be redirected to
-from django.template import loader
 from django.shortcuts import render, get_object_or_404 # the shortcut for catching errors
 from django.urls import reverse
 
@@ -16,10 +15,6 @@ def index(request):
     context = {'latest_question_list':latest_question_list}
     return render(request, 'polls/index.html', context)
   
-
-def index2(request):
-     
-    return HttpResponse('Hello, world. You are at the polls index' )
 
 def detail(request, question_id):
     # use get() and raise Http404 if the object doesn’t exist. Django provides a shortcut.
@@ -47,10 +42,11 @@ def vote(request, question_id):
         return render(request, 'polls/detail.html', {'question':question, 'error_message':'You didn\'t select a choice'})
     else:
         
-        selected_choice +=1
+        selected_choice.votes +=1
         selected_choice.save()
         # Always return an HttpResponseRedirect after successfully dealing with POST data
         # this prevents the form from being posted twice if the user hits the back Button
-        return HttpResponseRedirect(reverse('polls:results'),args=(question.id,))
+        return render(request, 'polls/result.html', {'question':question} )
+        # return HttpResponseRedirect(reverse('polls:results'),args=(question.id,))
     # We are using the reverse() function in the HttpResponseRedirect constructor in this example. This function
     # helps avoid having to hardcode a URL in the view function.

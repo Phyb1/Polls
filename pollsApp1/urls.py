@@ -6,7 +6,7 @@ urlpatterns = [
     # exaample; /polls/
     path('', views.index, name='index'), # the homepage
     # example: /polls/5/
-    path('specific/<int:question_id>/', views.detail, name='detail'), # to change the links simple edit the named url pattern
+    path('<int:question_id>/', views.detail, name='detail'), # to change the links simple edit the named url pattern
     # example: /polls/5/results/
     path('<int:question_id>/results/', views.results, name='results'),
     # example: polls/5/vote/
