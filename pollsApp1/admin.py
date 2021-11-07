@@ -19,5 +19,5 @@ class QuestionAdmin(admin.ModelAdmin):
     # fields = ['pub_date', 'question_text'] # customising the admin site
     list_display = ('question_text', 'pub_date', 'was_published_recently') # displaying columns of indvidual fields
     list_filter = ['pub_date'] # adding a filter that display as a side bar enables users to filter by `pub-date`
-    search_fields = ['question_text']
+    search_fields = ['question_text'] # adding search capabability that displays the question with the text query
 admin.site.register(Question, QuestionAdmin)
