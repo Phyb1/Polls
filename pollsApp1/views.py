@@ -1,4 +1,5 @@
-from django.http import HttpResponse, HttpResponseRedirect # takes only one argument which is the url the user will be redirected to
+from django.http import HttpResponse, HttpResponseRedirect
+from django.http.response import Http404 # takes only one argument which is the url the user will be redirected to
 from django.shortcuts import render, get_object_or_404 # the shortcut for catching errors
 from django.urls import reverse
 from django.utils import timezone
@@ -25,15 +26,17 @@ def detail(request, question_id):
     # use get() and raise Http404 if the object doesn’t exist. Django provides a shortcut.
     # the detail() view, rewritten
     question = get_object_or_404(Question, pk=question_id)
-    '''
-    try:
-        question = Question.objects.get(pk=question_id)
-        #question = Question.objects.get(pk=question_id)
-    except Question.DoesNotExist: # : The view raises the Http404 exception if a question with the requested ID doesn’t exist.
-        raise Http404('Quetsion does not exist')
-    '''
-    return render(request, 'polls/detail.html', {'question':question})
-
+    if question.pub_date <= timezone.now():
+        '''
+        try:
+            question = Question.objects.get(pk=question_id)
+            #question = Question.objects.get(pk=question_id)
+        except Question.DoesNotExist: # : The view raises the Http404 exception if a question with the requested ID doesn’t exist.
+            raise Http404('Quetsion does not exist')
+        '''
+        return render(request, 'polls/detail.html', {'question':question})
+    else:
+        raise Http404
 def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/result.html', {'question':question} )

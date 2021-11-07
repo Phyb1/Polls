@@ -1,6 +1,6 @@
 from django.contrib.sessions.backends.base import CreateError
 from django.http import response
-from django.test import TestCase
+from django.test import TestCase, client
 from django.urls import reverse
 from django.utils import timezone
 from django.test import TestCase
@@ -64,7 +64,7 @@ class QuestionViewTests(TestCase):
         response = self.client.get(reverse('polls:index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'No questions are available')
-        self.assertQuerysetEqual(response.content['latest_question_list'], [])
+        self.assertQuerysetEqual(response.context['latest_question_list'], [])
 
 
     def test_past_questions(self):
@@ -106,3 +106,37 @@ class QuestionViewTests(TestCase):
         question2 = create_question(question_text='Past question', days=-30)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(response.context['latest_question_list'], [question1, question2])
+
+
+class DetailView(TestCase):
+    
+    def get_Query_set(self):
+        '''
+        Excludes questions that have not been tested
+        '''
+        return Question.objects.filter(pub_date__lte=timezone.now())
+
+
+class QuestionDetailView(TestCase):
+    def test_future_questions(self):
+        '''
+        the view for a question with a `pub_date` in the future returns
+        a 404 not found
+        '''   
+        future_question = create_question(question_text='Future question', days=5)
+        url = reverse('polls:detail', args=(future_question.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+
+    def test_past_questions(self):
+        '''
+        the view for a question with a `pub_date` in the future shows
+        the `question_text`
+        '''
+        past_question = create_question(question_text='Past question', days=-5)
+        url = reverse('polls:detail', args=(past_question.id,))
+        response = self.client.get(url)
+        self.assertEqual(str(response.context['question']), past_question.question_text)
+
+

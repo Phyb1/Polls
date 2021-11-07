@@ -58,7 +58,7 @@ ROOT_URLCONF = 'Polls.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/'templates'], # path for project's template
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
