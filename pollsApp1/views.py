@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect # takes only one argument which is the url the user will be redirected to
 from django.shortcuts import render, get_object_or_404 # the shortcut for catching errors
 from django.urls import reverse
+from django.utils import timezone
 
 from .models import Question, Choice
 # Create your views here.
@@ -11,7 +12,11 @@ def index(request):
     return HttpResponse(template.render(context, request))
     '''
     # you can use the below shortcut render to achieve the same in above
-    latest_question_list = Question.objects.order_by('pub_date')[:5]
+    '''
+    returning the last 5 questions not including those set to be published 
+    in the future
+    ''' # pub_date__lte means less than or equal to
+    latest_question_list = Question.objects.filter(pub_date__lte=timezone.now()).order_by('pub_date')[:5]
     context = {'latest_question_list':latest_question_list}
     return render(request, 'polls/index.html', context)
   
