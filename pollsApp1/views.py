@@ -35,17 +35,18 @@ def detail(request, question_id):
     return render(request, 'polls/detail.html', {'question':question})
 
 def results(request, question_id):
-    response = 'You are looking at the results of question %s'
-    return HttpResponse(response %question_id )
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, 'polls/result.html', {'question':question} )
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
-        selected_choice = question.choice_sett.get(pk=request.POST['choice']) # request.POST is a dictionary-like object that lets you access submitted data by keyname
+        selected_choice = question.choice_set.get(pk=request.POST['choice']) # request.POST is a dictionary-like object that lets you access submitted data by keyname
     except (KeyError, Choice.DoesNotExist):
         # display the question voting form
         return render(request, 'polls/detail.html', {'question':question, 'error_message':'You didn\'t select a choice'})
     else:
+        
         selected_choice +=1
         selected_choice.save()
         # Always return an HttpResponseRedirect after successfully dealing with POST data
